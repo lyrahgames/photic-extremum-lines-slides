@@ -1,0 +1,41 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usepackage{tkz-euclide}
+
+\usepackage{times}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
+
+\definecolor{accent}{rgb}{0.9,0.9,0.9}
+
+\begin{document}
+\begin{tikzpicture}[
+  >={Stealth[scale = 1.5]},
+]
+
+  \tkzDefPoint(-1.0,-0.8){min}
+  \tkzDefPoint(3.0,3.0){max}
+
+  \tkzDefPoint(0,0){A}
+  \tkzDefPoint(2.5,0.5){B}
+  \tkzDefPoint(1.5,2.5){C}
+
+  \draw[draw,white,fill=accent] (A)--(B)--(C);
+  \tkzDrawSegment[->](A,B)
+  \tkzDrawSegment[dashed](B,C)
+  \tkzDrawSegment[<-](C,A)
+  \tkzDrawPoint(A)
+  \tkzDrawPoint(B)
+  \tkzDrawPoint(C)
+
+  \tkzLabelPoints[right](B)
+  \tkzLabelPoints[above](C)
+  \tkzLabelPoints[left](A)
+
+  \tkzLabelSegment[below](A,B){$u$}
+  \tkzLabelSegment[above left](C,A){$v$}
+
+\end{tikzpicture}
+\end{document}

@@ -62,10 +62,6 @@
 
 \def\UrlBigBreaks{\do\/\do-\do:}
 
-\setbeamertemplate{background}{
-  \includegraphics[width=\paperwidth,height=\paperheight]{images/background.png}
-}
-
 \title{%
   Illustrative Visualization: Photic Extremum Lines%
 }
@@ -78,18 +74,25 @@
 
 \selectlanguage{english}
 
-% { % all template changes are local to this group.
-%   \setbeamertemplate{navigation symbols}{}
-%   \begin{frame}<article:0>[plain]
-%     \begin{tikzpicture}[remember picture,overlay]
-%       \node[at=(current page.center)] {
-%         \includegraphics[keepaspectratio,
-%                          width=1.2\paperwidth,
-%                          height=\paperheight]{images/banner.png}
-%       };
-%     \end{tikzpicture}
-%   \end{frame}
-% }
+{ % all template changes are local to this group.
+  \setbeamertemplate{navigation symbols}{}
+  \begin{frame}<article:0>[plain]
+    % \begin{tikzpicture}[remember picture,overlay]
+    %   \node[at=(current page.center)] {
+    %     \includegraphics[keepaspectratio,
+    %                      width=1.2\paperwidth,
+    %                      height=\paperheight]{images/banner.png}
+    %   };
+    % \end{tikzpicture}
+    \center
+    \includegraphics[width=0.49\textwidth,trim={15px 15 15 50},clip]{images/predator-intro.png}
+    \includegraphics[width=0.49\textwidth,trim={15px 15 15 50},clip]{images/werewolf-intro.png}
+  \end{frame}
+}
+
+\setbeamertemplate{background}{
+  \includegraphics[width=\paperwidth,height=\paperheight]{images/background-luyu.png}
+}
 
 \frame{\titlepage}
 \begin{frame}{Outline}
@@ -97,20 +100,209 @@
   \hfill\parbox[t][7cm][l]{0.9\textwidth}{\tableofcontents}
 \end{frame}
 
-\section{Introduction}
+\section{Related Work}
   \begin{frame}{Related Work}
     \small
     \onslide<+->
+    \textbf{Tools}
+    \begin{description}
+      \item<+->[\citeyear{isenberg2003}] \citeauthor{isenberg2003} \citetitle{isenberg2003}
+      \item<+->[\citeyear{rusinkiewicz2004}] \citeauthor{rusinkiewicz2004} \citetitle{rusinkiewicz2004}
+    \end{description}
+    \onslide<+->
+    \textbf{Algorithm}
     \begin{description}
       \item<+->[\citeyear{xie2007}] \citeauthor{xie2007} \citetitle{xie2007}
       \item<+->[\citeyear{zhang2010}] \citeauthor{zhang2010} \citetitle{zhang2010}
     \end{description}
   \end{frame}
 
-\section{Background}
-\section{Concept}
+\section{Mathematical Preliminaries}
+  \begin{frame}{Mathematical Preliminaries: %
+    \only<1-3>{Mesh Function}%
+    \only<4-7>{Mesh Function Gradient}%
+    \only<8>{Directional Derivatives}%
+  }
+    % \begin{description}
+    %   \item[\citeyear{max1999}] \citeauthor{max1999} \citetitle{max1999}
+    %   \item[\citeyear{rusinkiewicz2004}] \citeauthor{rusinkiewicz2004} \citetitle{rusinkiewicz2004}
+    %   \item[\citeyear{meyer2001}] \citeauthor{meyer2001} \citetitle{meyer2001}
+    % \end{description}
+    \begin{figure}
+      \center
+      \includegraphics[height=0.45\textheight,trim={15px 15 15 50},clip]{images/sphere-wireframe.png}
+      \includegraphics[height=0.45\textheight]{figures/triangle.pdf}
+    \end{figure}
+    \vfill
+    \only<1-3>{%
+      \begin{itemize}
+        \item<2-> $\function{f}{S}{\setReal}$ on mesh $S$ characterized by its values at vertices
+        \item<3-> For interiors of faces, use barycentric interpolation
+      \end{itemize}
+    }%
+    \only<4-6>{%
+      \begin{itemize}
+        \item<5-> Compute $\nabla f$ for each face
+        \item<6-> For each vertex, accumulate weighted gradients for adjacent faces
+      \end{itemize}
+    }%
+    \only<7>{%
+      \begin{mybox}
+        \[
+          \mathrm{I}_{uv} \define
+          \begin{pmatrix}
+            \norm{u}^2 & \scalarProduct{u}{v} \\
+            \scalarProduct{u}{v} & \norm{v}^2
+          \end{pmatrix}
+          \separate
+          \nabla f =
+          \begin{pmatrix}
+            u & v
+          \end{pmatrix}
+          \mathrm{I}_{uv}^{-1}
+          \begin{pmatrix}
+            f(B) - f(A) \\
+            f(C) - f(A)
+          \end{pmatrix}
+        \]
+      \end{mybox}
+    }%
+    \only<8>{%
+      \begin{mybox}
+        \[
+          \partial_w f(x) = \scalarProduct{\nabla f(x)}{w}
+          \separate
+          \mathscr{D}_f\, g(x) \define \scalarProduct{\nabla g(x)}{\frac{\nabla f(x)}{\norm{\nabla f(x)}}}
+        \]
+      \end{mybox}
+    }%
+  \end{frame}
+
+\section{Photic Extremum Lines}
+  \begin{frame}{Photic Extremum Lines: Definition}
+    \begin{minipage}[c]{0.4\textwidth}
+      \center
+      \only<1>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-vertex-lighting.png}}%
+      \only<2-3>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-light-variation.png}}%
+      \only<4>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-light-variation-slope.png}}%
+      \only<5>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-pel-shader.png}}%
+      \only<6>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-contour-pel-shader.png}}%
+      \only<7>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-contour-pel-toon-shader.png}}%
+    \end{minipage}
+    \hfill
+    \begin{minipage}[c]{0.55\textwidth}
+      \begin{itemize}
+        \item<1-> Scalar illumination function \\
+        $\function{\varphi}{S}{\setReal}$ on mesh $S$ \\
+        (e.g. directional light source)
+        \item<2-> Variation of illumination $\norm{\nabla\varphi}$
+      \end{itemize}
+      \onslide<3->
+      \bigskip
+      \begin{mybox}
+        \textbf{Photic Extremum}\\
+        Illumination variation in the direction \\
+        its gradient reaches local maximum
+        \onslide<4->
+        \[
+          \mathscr{D}_\varphi \norm{\nabla \varphi}(x) = 0
+          \separate
+          \mathscr{D}_\varphi^2 \norm{\nabla \varphi}(x) < 0
+        \]
+      \end{mybox}
+    \end{minipage}
+  \end{frame}
+
 \section{Algorithm}
+  \begin{frame}{Algorithm: Overview}
+    % \begin{itemize}
+    %   \item Optional Preprocessing: Denoising Normals
+    %   \item Model Rendering for Hidden Line Removal: Z-Buffer Second-Pass Rendering
+    % \end{itemize}
+    \begin{mybox}
+    \begin{enumerate}
+      \item<+-> Compute $\varphi$
+      \item<+-> Compute $\frac{\nabla\varphi}{\norm{\nabla\varphi}}$ and $\norm{\nabla\varphi}$
+      \item<+-> Compute $\mathscr{D}_\varphi \norm{\nabla\varphi}$
+      \item<+-> Compute $\mathscr{D}^2_\varphi \norm{\nabla\varphi}$
+      \item<+-> Detect line vertices on edges by testing for photic extremums
+      \item<+-> Trace and filter out lines by using a threshold
+      \item<+-> Render visible lines
+    \end{enumerate}
+    \end{mybox}
+  \end{frame}
+
+  \begin{frame}{Algorithm: Line Detection and Tracing}
+    \begin{minipage}[c]{0.49\textwidth}
+      \only<1-2>{%
+      \begin{itemize}
+        \item<1-> For each edge $[v,w]\subset S$, \\
+          check zero-crossing:
+          \[
+            h(x) \define \mathscr{D}_\varphi \norm{\nabla\varphi}(x)
+          \]
+          \[
+            h(v)h(w) < 0
+          \]
+        \item<2-> Approximate zero-crossing:
+        \[
+          p \define \frac{\absolute{h(w)}v + \absolute{h(v)}w}{\absolute{h(v)} + \absolute{h(w)}}
+        \]
+      \end{itemize}
+      }%
+      \only<3-4>{%
+      \begin{itemize}
+        \item<3-> Check maximum condition:
+        \[
+          \mathscr{D}_\varphi^2\norm{\nabla\varphi}(p) < 0
+        \]
+        \item<4-> For each triangle, connect \\
+        valid zero-crossings of adjacent \\
+        edges to segments
+      \end{itemize}
+      }%
+      % For this we can use a geometry shader.
+      % For every face, compute zero crossings at edges.
+      % If point fulfills maximum condition, make it a line vertex.
+      % Two line vertices are emitted as line segment.
+    \end{minipage}
+    \hfill
+    \begin{minipage}[c]{0.49\textwidth}
+      \includegraphics[width=0.9\textwidth,trim={15px 15 15 50},clip]{images/subpolygon-lines.png}
+    \end{minipage}
+  \end{frame}
+
+  \begin{frame}{Algorithm: Threshold Filter}
+    \begin{figure}
+      \center
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/fox-skull-threshold-low.png}
+      \hspace{5em}
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/fox-skull-threshold-mid.png}
+    \end{figure}
+    \pause
+    Strength $S$ of photic extremum or strength $\mathscr{S}$ of photic extremum line $L$:
+    \begin{mybox}
+      \[
+        S(x) = \norm{\nabla \varphi(x)} > T
+        \qquad \text{or} \qquad
+        \mathscr{S}(L) \define \integral{L}{}{\norm{\nabla \varphi(s)}}{s} > T
+      \]
+    \end{mybox}
+  \end{frame}
+
 \section{Results}
+  \begin{frame}{Photic Extremum Lines: Properties}
+    \begin{itemize}
+      \item Object-space method
+      \item View- and light-dependent
+      \item Third- and fourth-order derivatives
+      \item
+    \end{itemize}
+  \end{frame}
+  \begin{frame}{Problems}
+    preprocessing and good meshes
+  \end{frame}
+
 \section{Conclusions}
 
 
