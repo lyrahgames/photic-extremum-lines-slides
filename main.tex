@@ -143,7 +143,8 @@
     \only<4-6>{%
       \begin{itemize}
         \item<5-> Compute $\nabla f$ for each face
-        \item<6-> For each vertex, accumulate weighted gradients for adjacent faces
+        \item<6-> For each vertex, accumulate weighted and rotated \\
+        gradients for adjacent faces
       \end{itemize}
     }%
     \only<7>{%
@@ -179,7 +180,7 @@
   \end{frame}
 
 \section{Photic Extremum Lines}
-  \begin{frame}{Photic Extremum Lines: Definition}
+  \begin{frame}{Photic Extremum Lines}
     \begin{minipage}[c]{0.4\textwidth}
       \center
       \only<1>{\includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/dragon-head-vertex-lighting.png}}%
@@ -215,20 +216,17 @@
 
 \section{Algorithm}
   \begin{frame}{Algorithm: Overview}
-    % \begin{itemize}
-    %   \item Optional Preprocessing: Denoising Normals
-    %   \item Model Rendering for Hidden Line Removal: Z-Buffer Second-Pass Rendering
-    % \end{itemize}
     \begin{mybox}
-    \begin{enumerate}
-      \item<+-> Compute $\varphi$
-      \item<+-> Compute $\frac{\nabla\varphi}{\norm{\nabla\varphi}}$ and $\norm{\nabla\varphi}$
-      \item<+-> Compute $\mathscr{D}_\varphi \norm{\nabla\varphi}$
-      \item<+-> Compute $\mathscr{D}^2_\varphi \norm{\nabla\varphi}$
-      \item<+-> Detect line vertices on edges by testing for photic extremums
-      \item<+-> Trace and filter out lines by using a threshold
-      \item<+-> Render visible lines
-    \end{enumerate}
+      \pause
+      \begin{enumerate}
+        \item<+-> Compute $\varphi$
+        \item<+-> Compute $\frac{\nabla\varphi}{\norm{\nabla\varphi}}$ and $\norm{\nabla\varphi}$
+        \item<+-> Compute $\mathscr{D}_\varphi \norm{\nabla\varphi}$
+        \item<+-> Compute $\mathscr{D}^2_\varphi \norm{\nabla\varphi}$
+        \item<+-> Detect line vertices on edges by testing for photic extremums
+        \item<+-> Trace and filter out lines by using a threshold
+        \item<+-> Render visible lines
+      \end{enumerate}
     \end{mybox}
   \end{frame}
 
@@ -290,21 +288,95 @@
     \end{mybox}
   \end{frame}
 
-\section{Results}
-  \begin{frame}{Photic Extremum Lines: Properties}
+  \begin{frame}{Algorithm: Hidden Line Removal}
+    \begin{figure}
+      \center
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/cyborg-contour-pel-hidden-shader.png}
+      \hspace{5em}
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/cyborg-contour-pel-shader.png}
+    \end{figure}
+    \bigskip
+    \pause
     \begin{itemize}
-      \item Object-space method
-      \item View- and light-dependent
-      \item Third- and fourth-order derivatives
-      \item
+      \item<+-> Use z-buffer in a two-pass rendering approach
+      \item<+-> Render the shape with a custom shader for its fragments
+      \item<+-> Render visible feature lines by using depth testing
     \end{itemize}
   \end{frame}
-  \begin{frame}{Problems}
-    preprocessing and good meshes
+
+\section{Results}
+  \begin{frame}{Results: General Properties}
+    \begin{minipage}[c]{0.49\textwidth}
+      \center
+      \includegraphics[width=\textwidth,trim={15px 15 15 50},clip]{images/rider.png}
+    \end{minipage}
+    \pause
+    \begin{minipage}[c]{0.49\textwidth}
+      \begin{itemize}
+        \item<+-> Able to render convex and concave edges simultaneously
+        % \item<+-> Convey shapes similar to human perception
+        \item<+-> Applicable to isosurfaces of volumetric datasets
+        \item<+-> Highly dependent on scalar illumination function
+        \item<+-> Computationally expensive: \\
+        interactive on CPU, \\
+        real-time capable on GPU
+      \end{itemize}
+    \end{minipage}
+  \end{frame}
+
+  \begin{frame}{Results: Contours vs. Photic Extremum Lines}
+    \begin{figure}
+      \center
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/tile-contour-shader.png}
+      \hspace{5em}
+      \includegraphics[height=0.49\textheight,trim={15px 15 15 50},clip]{images/tile-contour-pel-shader.png}
+    \end{figure}
+    \bigskip
+    \pause
+    \begin{itemize}
+      \item<+-> Contours lack details, but are strongest for overall shape
+      \item<+-> Photic extremum lines convey additional structure
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Results: Normal Denoising}
+    \begin{minipage}[c]{0.49\textwidth}
+      \center
+      \includegraphics[width=0.8\textwidth,trim={15px 15 15 50},clip]{images/lamborghini-front.png}\\
+      \includegraphics[width=0.8\textwidth,trim={15px 15 15 50},clip]{images/lamborghini-side.png}
+    \end{minipage}
+    \begin{minipage}[c]{0.49\textwidth}
+      \center
+      \only<1-3>{\includegraphics[width=0.8\textwidth,trim={15px 15 15 50},clip]{images/head-contour-pel-shader.png}}%
+      \only<4>{\includegraphics[width=0.8\textwidth,trim={15px 15 15 50},clip]{images/head-light-variation.png}}%
+    \end{minipage}
+    \pause
+    \begin{itemize}
+      \item<+-> Scanned models with many triangles often provide noisy normals
+      \item<+-> Such noise leads to small feature line artifacts
+      \item<+-> Bilateral normal filtering should be applied
+    \end{itemize}
   \end{frame}
 
 \section{Conclusions}
-
+  \begin{frame}{Conclusions}
+    \textbf{Summary}
+    \pause
+    \begin{itemize}
+      \item<+-> Photic Extremums: $\quad \mathscr{D}_\varphi \norm{\nabla \varphi}(x) = 0\ ,\quad \mathscr{D}_\varphi^2 \norm{\nabla \varphi}(x) < 0$
+      \item<+-> View- and light-dependent object-space feature line method
+      \item<+-> Computationally expensive third- to fourth-order derivatives
+      \item<+-> Convey shapes similar to human perception
+    \end{itemize}
+    \bigskip
+    \pause
+    \textbf{Future Work}
+    \begin{itemize}
+      \item<+-> Faster GPU-based implementation even for volumetric datasets
+      \item<+-> Robustness: Exaggerated and mean curvature illumination
+      \item<+-> Robustness: Automatic thresholding and noise filtering
+    \end{itemize}
+  \end{frame}
 
 \begin{frame}
   \vfill
@@ -322,12 +394,13 @@
   % \tiny
   \AtNextBibliography{\tiny}
   \begin{multicols}{2}
-    \nocite{*}
+    \nocite{decarlo2003}
+    \nocite{kolomenkin2008}
+    \nocite{rusinkiewicz2006}
+    \nocite{meyer2001}
+    \nocite{kindlmann2003}
     \printbibliography
   \end{multicols}
 \end{frame}
-
-\appendix
-\section{Previous Work}
 
 \end{document}
